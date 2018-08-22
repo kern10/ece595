@@ -1,2 +1,2 @@
-# ECE595-projects
+# ECE595 projects
 Intro to Operating Systems (DLXOS)
