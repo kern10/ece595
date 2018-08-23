@@ -9689,7 +9689,7 @@ LC5_LF6:
 .ascii "Got a printf trap!\n\000"
 .align 2
 LC6_LF6:
-.ascii "PID: %d\n\000"
+.ascii "PID: 0x%X\n\000"
 .align 2
 LC7_LF6:
 .ascii "Got an open with parameters (\'%s\',0x%x)\n\000"
