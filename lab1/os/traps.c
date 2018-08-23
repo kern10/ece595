@@ -129,6 +129,7 @@ dointerrupt (unsigned int cause, unsigned int iar, unsigned int isr,
 {
   int	result;
   int	i;
+  int pid;
   uint32	args[4];
   int	intrs;
 
@@ -162,6 +163,13 @@ dointerrupt (unsigned int cause, unsigned int iar, unsigned int isr,
       dbprintf ('t', "Got a printf trap!\n");
       TrapPrintfHandler (trapArgs, isr & DLX_STATUS_SYSMODE);
       break;
+	  // STP ADDED BEGINS *****************************************************
+	case TRAP_GET_CURR_PID:
+	  // Call the trap TRAP_GET_CURR_PID handler and pass args
+	  pid = GetCurrentPid();
+	  printf("PID: %d\n",(int)pid);
+	  break;
+	  // STP ADDED ENDS *******************************************************
     case TRAP_OPEN:
       // Get the arguments to the trap handler.  If this is a user mode trap,
       // copy them from user space.

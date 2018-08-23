@@ -52,6 +52,20 @@ static processQuantum = DLX_PROCESS_QUANTUM;
 // String listing debugging options to print out.
 char	debugstr[200];
 
+//----------------------------------------------------------------------
+//  GetCurrentPid
+//
+//	Return the current process ID.
+//  ID of a process in DLXOS is defined as the pcb's index in the 
+//	array of all pcbs. i.e. (pcbs-pcb)
+//	Return type: unsigned int
+//----------------------------------------------------------------------
+unsigned int GetCurrentPid()
+{
+	PCB	*pcb;
+	return((unsigned int)pcb-(unsigned int)pcbs);
+}
+
 
 //----------------------------------------------------------------------
 //
