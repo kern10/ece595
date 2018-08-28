@@ -63,7 +63,7 @@ char	debugstr[200];
 unsigned int GetCurrentPid()
 {
 	PCB	*pcb;
-	return((unsigned int)pcb-(unsigned int)pcbs);
+	return((unsigned int)currentPCB - (unsigned int)pcbs);
 }
 
 
