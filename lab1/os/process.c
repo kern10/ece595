@@ -57,13 +57,12 @@ char	debugstr[200];
 //
 //	Return the current process ID.
 //  ID of a process in DLXOS is defined as the pcb's index in the 
-//	array of all pcbs. i.e. (pcbs-pcb)
+//	array of all pcbs. i.e. (pcbs-currentPCB)
 //	Return type: unsigned int
 //----------------------------------------------------------------------
 unsigned int GetCurrentPid()
 {
-	PCB	*pcb;
-	return((unsigned int)currentPCB - (unsigned int)pcbs);
+	return(unsigned int)(currentPCB - pcbs);
 }
 
 

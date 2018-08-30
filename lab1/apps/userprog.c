@@ -3,7 +3,7 @@
 void main (int x)
 {
 	Printf("Hello World!\n");
-	Printf("LAB01: Implementing User Trap\n");
+	Printf("LAB01: Implementing User Trap Getpid()\n");
 
 	/*********************************************************
 	 * Getpid() is a system call to the OS to print the 

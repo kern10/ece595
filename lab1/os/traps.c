@@ -167,7 +167,7 @@ dointerrupt (unsigned int cause, unsigned int iar, unsigned int isr,
 	case TRAP_GET_CURR_PID:
 	  // Call the trap TRAP_GET_CURR_PID handler and pass args
 	  pid = GetCurrentPid();
-	  printf("PID: 0x%X\n",(unsigned int)pid);
+	  printf("PID: %d\n",(unsigned int)pid);
 	  break;
 	  // STP ADDED ENDS *******************************************************
     case TRAP_OPEN:
