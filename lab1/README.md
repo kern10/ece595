@@ -17,4 +17,3 @@
 	``` $ dlxsim -x ~/ece595/lab1/os/work/os.dlx.obj -a -u ~/ece595/lab1/apps/work/userprog.dlx.obj```
 
 ## Expected 
-
