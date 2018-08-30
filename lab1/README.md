@@ -27,5 +27,11 @@ The last three printed lines upon execution of the program should be:
 ``` LAB01: Implementing User Trap Getpid()```  
 ``` PID: 31```  
 
+## References
+1. DLX Instruction Set
+2. The DLX Architecture
+3. The DLX Operating System (DLXOS) Design
+
+
 ## END README
 
