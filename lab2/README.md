@@ -26,7 +26,7 @@ b->item1 = 5;
 #### circular buffers typically are used to implement producer-consumer problem  
 > head --> index to first availible slot in buffer space array  
 > tail --> index to first full slot in buffer space array  
-> buffer space --> an array to hold data  
+> buffer --> an array to hold data  
 
 __before consumer process removes an item from buffer...__  
 ```C
@@ -52,6 +52,75 @@ else
 {  
 	// buffer not full  
 }  
+```
+
+---
+
+## Implementing circular buffer  
+
+__data structure definition__  
+```C
+// Define data structure
+typedef struct {
+	uint8_t * const buffer;
+	int head;
+	int tail;
+	const int BUFFER_SIZE;
+} prod_cons_c_buffer_t;
+```
+
+__producer function__  
+```C
+int producer(prod_cons_c_buffer_t * cbuf, uint8_t data)
+{
+	// Check for full condition
+	if ((cbuf->head + 1) % (cbuf->BUFFER_SIZE) == (cbuf->tail))
+	{
+		// buffer full
+		return -1;
+	}
+	int next = cbuf->(cbuf->head + 1);
+	if (next >= cbuf->BUFFER_SIZE)
+	{
+		// Go back to start
+		next = 0;
+	}
+
+	// Push into buffer
+	cbuf->buffer[cbuf->head] = data;
+
+	// Change the circular buffer's head
+	cbuf->head = next;	
+
+	return 0;
+}
+```
+
+__consumer function__  
+```C
+int consumer(prod_cons_c_buffer_t * cbuf, uint8_t * data)
+{
+	if (cbuf->head == cbuf->tail)
+	{
+		// buffer empty
+		return -1;
+	}
+
+	// Buffer is NOT empty
+	int next = cbuf->tail + 1;
+	// start at beginning
+	if (next >= cbuf->BUFFER_SIZE)
+	{
+		next = 0;
+	}
+
+	// Read data
+	*data = cbuf->buffer[cbuf->tail];
+	
+	cbuf->tail = next;
+	
+	return 0;
+}
 ```
 
 
