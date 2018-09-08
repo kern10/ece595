@@ -3,13 +3,13 @@
 
 typedef struct shared_mem {
 	int numprocs;
-	char * const buffer;
+	char * buffer;
 	int head;
 	int tail;
-	const int BUFFER_SIZE;
+	int maxbuf;
 } shared_mem;
 
 #define PRODUCER_RUN "producer.dlx.obj"
-#define CONSUMER_RUN "consumer.dlx.obj"
+
 
 #endif
