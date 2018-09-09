@@ -1,6 +1,7 @@
 #include "lab2-api.h"
 #include "usertraps.h"
 #include "misc.h"
+
 #include "q1.h"
 
 void main (int argc, char *argv[])
@@ -12,6 +13,9 @@ void main (int argc, char *argv[])
  	sem_t s_procs_completed;        // Semaphore used to wait until all spawned processes have completed
   	char h_mem_str[10];             // Used as command-line argument to pass mem_handle to new processes
   	char s_procs_completed_str[10]; // Used as command-line argument to pass page_mapped handle to new processes
+	lock_t l_proc;
+	char l_proc_str[10];
+	int lock_status;
 
   	if (argc != 2) 
 	{
@@ -53,14 +57,15 @@ void main (int argc, char *argv[])
   	// should be equal to the number of processes we're spawning - 1.  Once 
   	// each of the processes has signaled, the semaphore should be back to
   	// zero and the final sem_wait below will return.
-	if ((s_procs_completed = sem_create(-((numprocs)-1))) == SYNC_FAIL) 
+	/*if ((s_procs_completed = sem_create(-((numprocs)-1))) == SYNC_FAIL) 
 	{
  	   	Printf("Bad sem_create in "); 
 		Printf(argv[0]); 
 		Printf("\n");
     		Exit();
-  	}
-
+  	}*/
+	l_proc = lock_create();
+	ditoa(l_proc, l_proc_str);
   	// Setup the command-line arguments for the new process.  We're going to
   	// pass the handles to the shared memory page and the semaphore as strings
   	// on the command line, so we must first convert them from ints to strings.
@@ -73,7 +78,9 @@ void main (int argc, char *argv[])
   	// knows how many arguments you are sending.
   	/*for (i=0; i<numprocs; i++) 
 	{*/
-   	process_create(PRODUCER_RUN, h_mem_str, s_procs_completed_str, NULL);
+	while (lock_acquire(l_proc) != SYNC_SUCCESS);
+   	process_create(PRODUCER_RUN, h_mem_str, l_proc_str, NULL);
+	lock_status = lock_release(l_proc);
 	//}
 
 	/*for (i=0; i<numprocs; i++)
@@ -82,14 +89,14 @@ void main (int argc, char *argv[])
 	}*/
 
   	// And finally, wait until all spawned processes have finished.
-  	if (sem_wait(s_procs_completed) != SYNC_SUCCESS) 
+  	/*if (sem_wait(s_procs_completed) != SYNC_SUCCESS) 
 	{
     	Printf("Bad semaphore s_procs_completed (%d) in ", s_procs_completed); 
 		Printf(argv[0]); 
 		Printf("\n");
     	Exit();
 
-  	}
+  	}*/
 
   	Printf("All producers/consumers have completed, exiting main process.\n");
 }
