@@ -6,79 +6,50 @@
 
 void main (int argc, char *argv[])
 {
-  	shared_mem * smem;       
-  	uint32 h_mem;            // Handle to the shared memory page
-  	lock_t l_proc; // Semaphore to signal the original process that we're done
-	sem_t sem_proc;
-	int lock_status;
-	int i;
-	char hello[12] = "Hello World";		
-	int next;
-	//lock_t l_proc;
-	int l_status;
-	int who_pid;
+  	shared_mem * smem;  // Circular buffer handle     
+  	uint32 h_mem;      	// Handle to the shared memory page
+  	lock_t l_proc; 		// Lock for exclusive code
+	sem_t sem_proc;		// Semaphore to signal the original process that we're done
+	int lock_status;	// Lock function return values
+	int i=0;				// Incrementer
+	char hello[12] = "Hello World";	// Value placed in buffer	
+	int next;			// Circular buffer accessory
+	int chars_left=0;	// Incrementer for placing chars of "Hello World"
 
-  	if (argc != 3) { 
-    	Printf("Usage: "); Printf(argv[0]); Printf(" <handle_to_shared_memory_page> <handle_to_page_mapped_semaphore>\n"); 
-    	Exit();
+  	if (argc != 4) { 
+    	Printf("Usage: "); Printf(argv[0]); Printf(" <handle_to_shared_memory_page> <handle_to_page_mapped_lock> <handle_to_page_mapped_semaphore>\n"); Exit();
   	} 
 
   	// Convert the command-line strings into integers for use as handles
   	h_mem = dstrtol(argv[1], NULL, 10);
-  	//l_proc = dstrtol(argv[2], NULL, 10);
-	sem_proc = dstrtol(argv[2], NULL, 10);
+  	l_proc = dstrtol(argv[2], NULL, 10);
+	sem_proc = dstrtol(argv[3], NULL, 10);
 
  	// Map shared memory page into this process's memory space
   	if ((smem = (shared_mem *)shmat(h_mem)) == NULL) {
-    	Printf("Could not map the virtual address to the memory in "); 
-		Printf(argv[0]); 
-		Printf(", exiting...\n");
-    	Exit();
+    	Printf("Could not map the virtual address to the memory in "); Printf(argv[0]); Printf(", exiting...\n"); Exit();
  	}
 
-	l_proc = lock_create();
-	l_status = lock_acquire(l_proc);
-	while(l_status != SYNC_SUCCESS);
-  	// Now print a message to show that everything worked
-  	Printf("producer: This is one of the %d instances you created.\n", smem->numprocs);
-  	who_pid = Getpid();
-  	Printf("producer: My PID is %d\n", who_pid);
 
-	// add 12 chars to circular buffer here
-
-	if((smem->head + 1) % (smem->maxbuf) == (smem->tail))
+	// Access shared memory and place characters one by one
+	while(i < 11)
 	{
-		l_status = lock_release(l_proc);
-		sem_wait(sem_proc);	
-		l_status = lock_acquire(l_proc);
-		while(l_status != SYNC_SUCCESS);	
-	}
-
-
-	for (i=0; i<12; i++)
-	{
-		next = (smem->head)+1;
-		if (next >= smem->maxbuf)
+		// Get the lock
+		if(lock_acquire(l_proc))
 		{
-			next = 0;
-			smem->head = next;
+			if(smem->head != ((smem->tail+1)%(smem->maxbuf)))
+			{
+				smem->buffer[smem->tail] = hello[i];
+				Printf("Producer %d inserted: %c\n",Getpid(), hello[i]);
+				smem->tail = (smem->tail+1)%smem->maxbuf;
+				i++;
+			}
+			
 		}
-
-		smem->buffer[smem->head] = hello[i];
-		Printf("Producer %d inserted: %c\n",who_pid, hello[i]);//(smem->buffer[smem->head]));
-		smem->head = next;
 	}
 
   	// Signal the semaphore to tell the original process that we're done
-  	Printf("producer: PID %d is complete.\n", Getpid());
-
-	l_status = lock_release(l_proc);
-	if (l_status != SYNC_SUCCESS)
-	{
-		Printf("ERROR: lock not released");
-		Exit();
-	}
-  
+  	Printf("producer: PID %d is complete. Killing it.\n", Getpid());  
   	if(sem_signal(sem_proc) != SYNC_SUCCESS) 
 	{
 	    	Printf("Bad semaphore s_procs_completed (%d) in ", sem_proc); 
