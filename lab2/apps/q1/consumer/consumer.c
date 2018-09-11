@@ -41,7 +41,7 @@ void main (int argc, char *argv[])
 			if(cbuf->tail != cbuf->head)
 			{
 				// REMOVE CHAR FROM BUFFER
-				tmpc = *cbuf->buffer[cbuf->head]; // Attempt for char to print (fail)
+				tmpc = cbuf->buffer[cbuf->head]; // Attempt for char to print (fail)
 				Printf("Consumer %d removed: %c\n",Getpid(),tmpc);
 				// UPDATE TAIL
 				cbuf->head = (cbuf->head+1)%cbuf->maxbuf;
