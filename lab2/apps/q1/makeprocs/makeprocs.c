@@ -6,20 +6,22 @@
 
 void main (int argc, char *argv[])
 {
+	// Variable declarations
 	int numprocs = 0;               // Used to store number of processes to create
   	int i;                          // Loop index variable
   	shared_mem * smem;              // Used to get address of shared memory page
   	uint32 h_mem;                   // Used to hold handle to shared memory page
- 	sem_t s_procs_completed;        // Semaphore used to wait until all spawned processes have completed
-  	char h_mem_str[10];             // Used as command-line argument to pass mem_handle to new processes
-  	char s_procs_completed_str[10]; // Used as command-line argument to pass page_mapped handle to new processes
-	lock_t l_proc;
-	char l_proc_str[10];
-	int lock_status;
+ 	sem_t s_procs_completed;        // Semaphore used wait until procs complete
+  	char h_mem_str[10];             // Used as CLA to pass mem_handle to procs
+  	char s_procs_completed_str[10]; // Used as CLA to pass page_mapped hndl to procs
+	lock_t l_proc;					// Lock used to indicated critcal sections
+	char l_proc_str[10];			// Used as CLA to pass lock handle to procs
 
+	// Check CLA's
   	if (argc != 2) 
 	{
-    	Printf("Usage: "); Printf(argv[0]); Printf(" <number of processes to create>\n");
+    	Printf("Usage: "); Printf(argv[0]); 
+		Printf(" <number of processes to create>\n");
     	Exit();
   	}
 
@@ -27,17 +29,15 @@ void main (int argc, char *argv[])
   	numprocs = dstrtol(argv[1], NULL, 10);
   	Printf("Creating 2*%d processes...\n", numprocs);
 
-  	// Allocate space for a shared memory page, which is exactly 64KB
-  	// Note that it doesn't matter how much memory we actually need: we 
-  	// always get 64KB
+  	// Allocate space for a shared memory page, which is exactly 64KB 
   	if ((h_mem = shmget()) == 0) 
 	{
     	Printf("ERROR: could not allocate shared memory page in "); 
 		Printf(argv[0]); Printf(", exiting...\n");
     	Exit();
   	}
-
-  	// Map shared memory page into this process's memory space
+  	
+	// Map shared memory page into this process's memory space
   	if ((smem = (shared_mem *)shmat(h_mem)) == NULL) 
 	{
     	Printf("Could not map the shared page to virtual address in "); 
@@ -52,11 +52,7 @@ void main (int argc, char *argv[])
 	smem->maxbuf = 12;
 
   	// Create semaphore to not exit this process until all other processes
-  	// have signalled that they are complete.  To do this, we will initialize
-  	// the semaphore to (-1) * (number of signals), where "number of signals"
-  	// should be equal to the number of processes we're spawning - 1.  Once 
-  	// each of the processes has signaled, the semaphore should be back to
-  	// zero and the final sem_wait below will return.
+  	// have signalled that they are complete. Initialize to (-1)*(numprocs)  
 	if ((s_procs_completed = sem_create(-((numprocs)-1))) == SYNC_FAIL) 
 	{
  	   	Printf("Bad sem_create in "); 
@@ -65,26 +61,24 @@ void main (int argc, char *argv[])
    		Exit();
   	}
 	
+	// Create a lock, check fail
 	if((l_proc = lock_create()) == SYNC_FAIL)
 	{
 		Printf("PROCESS COULD NOT INITIALIZE LOCK\n");
 		Exit();
 	}
 
-  	// Setup the command-line arguments for the new process.  We're going to
-  	// pass the handles to the shared memory page and the semaphore as strings
-  	// on the command line, so we must first convert them from ints to strings.
+  	// Setup the command-line arguments for the new processes
   	ditoa(h_mem, h_mem_str);
 	ditoa(l_proc, l_proc_str);
   	ditoa(s_procs_completed, s_procs_completed_str);
 
-	
-	// Now we can create the processes. Note that you MUST end your call to
-  	// process_create with a NULL argument so that the operating system
-  	// knows how many arguments you are sending.
+	// Now we can create the processes 
   	for (i=0; i<numprocs; i++) 
 	{
-   		process_create(PRODUCER_RUN, h_mem_str,l_proc_str, s_procs_completed_str, NULL);
+		// Pass each process the handle to memory, lock handle, semaphore handle
+   		process_create(PRODUCER_RUN, h_mem_str, l_proc_str, s_procs_completed_str, NULL);
+		process_create(CONSUMER_RUN, h_mem_str, l_proc_str, s_procs_completed_str, NULL);	
 	}
 
 
@@ -95,8 +89,8 @@ void main (int argc, char *argv[])
 		Printf(argv[0]); 
 		Printf("\n");
     	Exit();
-
   	}
 
+	// Done here, exiting
   	Printf("All producers/consumers have completed, exiting main process.\n");
 }

@@ -10,15 +10,14 @@ void main (int argc, char *argv[])
   	shared_mem * smem;  			// Circular buffer handle   
   	uint32 h_mem;      				// Handle to the shared memory page
   	lock_t lock; 					// Lock for exclusive code
-	sem_t sem_proc;					// Semaphore to signal the original process
+	sem_t sem_proc;					// Semaphore to signal the original proc
 	int i=0;						// Incrementer
-	char hello[12] = "Hello World";	// Value placed in buffer	
 	int next;						// Circular buffer accessory
 
 	// Check CLA's
   	if (argc != 4) { 
     	Printf("Usage: "); Printf(argv[0]); Printf(" <handle_to_shared_memory_page> <handle_to_page_mapped_lock> <handle_to_page_mapped_semaphore>\n"); Exit();
-  	} 
+  	}
 
   	// Convert the command-line strings into integers for use as handles
   	h_mem = dstrtol(argv[1], NULL, 10);
@@ -37,26 +36,25 @@ void main (int argc, char *argv[])
 		// Get the lock
 		if(lock_acquire(lock))
 		{
-			// If !FULL
-			if(smem->head != ((smem->tail+1)%(smem->maxbuf)))
+			// If !EMPTY
+			if(smem->tail != smem->head)
 			{
-				// ADD CHAR TO BUFFER
-				smem->buffer[smem->tail] = hello[i];
-				Printf("Producer %d inserted: %c\n",Getpid(), hello[i]);
+				// REMOVE CHAR FROM BUFFER
+				Printf("Consumer %d removed: %c\n",Getpid(), smem->buffer[smem->head]);
 				// UPDATE TAIL
-				smem->tail = (smem->tail+1)%smem->maxbuf;
+				smem->head = (smem->head+1)%smem->maxbuf;
 				i++;
 			}
 			// Release the lock
 			if (lock_release(lock) != SYNC_SUCCESS)
 			{
-				Printf("ERROR RELEASING LOCK %d", Getpid());
+				Printf("ERROR");
 			}
 		}
 	}
 
   	// Signal the semaphore to tell the original process that we're done
-  	Printf("producer: PID %d is complete. Killing it.\n", Getpid());
+  	Printf("consumer: PID %d is complete. Killing it.\n", Getpid());
   	if(sem_signal(sem_proc) != SYNC_SUCCESS) 
 	{
 		Printf("Bad semaphore s_procs_completed (%d) in ", sem_proc); 

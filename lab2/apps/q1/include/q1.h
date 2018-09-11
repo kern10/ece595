@@ -10,6 +10,6 @@ typedef struct shared_mem {
 } shared_mem;
 
 #define PRODUCER_RUN "producer.dlx.obj"
-
+#define CONSUMER_RUN "consumer.dlx.obj"
 
 #endif
