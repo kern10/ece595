@@ -49,11 +49,11 @@ void main (int argc, char *argv[])
   	cbuf->numprocs = numprocs;
 	cbuf->head = 0;
 	cbuf->tail = 0;
-	cbuf->maxbuf = 12;
+	cbuf->maxbuf = 11;
 
   	// Create semaphore to not exit this process until all other processes
   	// have signalled that they are complete. Initialize to (-1)*(numprocs)  
-	if ((s_procs_completed = sem_create(-((numprocs)-1))) == SYNC_FAIL) 
+	if ((s_procs_completed = sem_create(-((numprocs*2)-1))) == SYNC_FAIL) 
 	{
  	   	Printf("Bad sem_create in "); 
 		Printf(argv[0]); 

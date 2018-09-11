@@ -13,7 +13,7 @@ void main (int argc, char *argv[])
 	sem_t sem_proc;					// Semaphore to signal the original proc
 	int i=0;						// Incrementer
 	int next;						// Circular buffer accessory
-	char tmpc;						// Store char removed
+	//char tmpc;						// Store char removed
 
 	// Check CLA's
   	if (argc != 4) { 
@@ -41,9 +41,8 @@ void main (int argc, char *argv[])
 			if(cbuf->tail != cbuf->head)
 			{
 				// REMOVE CHAR FROM BUFFER
-				tmpc = cbuf->buffer[cbuf->head]; // Attempt for char to print (fail)
-				Printf("Consumer %d removed: %c\n",Getpid(),tmpc);
-				// UPDATE TAIL
+				Printf("Consumer %d removed: %x\n",Getpid(),cbuf->buffer[cbuf->head]);
+				// UPDATE HEAD
 				cbuf->head = (cbuf->head+1)%cbuf->maxbuf;
 				i++;
 			}
@@ -56,7 +55,7 @@ void main (int argc, char *argv[])
 	}
 
   	// Signal the semaphore to tell the original process that we're done
-  	Printf("consumer: PID %d is complete. Killing it.\n", Getpid());
+	Printf("Consumer: PID %d is complete. Killing it.\n", Getpid());
   	if(sem_signal(sem_proc) != SYNC_SUCCESS) 
 	{
 		Printf("Bad semaphore s_procs_completed (%d) in ", sem_proc); 

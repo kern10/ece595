@@ -42,7 +42,7 @@ void main (int argc, char *argv[])
 			{
 				// ADD CHAR TO BUFFER
 				cbuf->buffer[cbuf->tail] = hello[i];
-				Printf("Producer %d inserted: %c\n",Getpid(), hello[i]);
+				Printf("Producer %d inserted: %c\n",Getpid(), cbuf->buffer[cbuf->tail]);
 				// UPDATE TAIL
 				cbuf->tail = (cbuf->tail+1)%cbuf->maxbuf;
 				i++;
