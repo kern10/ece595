@@ -1,30 +1,21 @@
 # ECE595 Intro to Operating Systems (DLXOS) Programming Projects
 
+## Team members: Andrew St. Pierre + Eli Kern
+## Course: ECE595 Intro to Operating Systems, Fall 2018  
+
+
 ### [ECE595 Programming Project 1](https://engineering.purdue.edu/~ece595/labs_2018/lab1.html)
 #### Description
 > This first project first sets up the DLXOS directory structure and dev environment on an ECN Linux machine. Then, a new user trap called "Getpid" is implemented. This trap returns an integer representing the ID of the current process. When DLXOS is run on the hardware simulator, the integer PID is printed.
 
-#### Getting started
-1. Enter the lab1 directory.  
-	``` $ cd  ~/ece595/lab1```
-2. First we will compile the OS. This is made easy by make.  
-	``` $ cd os/```  
-	``` $ make```
-3. Next, we will compile the user program. This is made easy by make.  
-	``` $ cd  ~/ece595/lab1```  
-	``` $ cd apps/```  
-	``` $ make```  
-4. Now we will run the program.  
-	``` $ cd  ~/ece595/lab1```  
-	``` $ dlxsim -x ~/ece595/lab1/os/work/os.dlx.obj -a -u ~/ece595/lab1/apps/work/userprog.dlx.obj```
 
-#### Expected
-The last three printed lines upon execution of the program should be:  
-``` Hello World!```  
-``` LAB01: Implementing User Trap Getpid()```  
-``` PID: 31```  
+### [ECE595 Programming Project 2](https://engineering.purdue.edu/~ece595/labs_2018/lab2.html)  
+#### Description
+> The purpose of this lab is to become familiar with the problems of process synchronization and their solutions using OS-provided synchronization primitives. In particular, you will solve the classic producer-consumer problem using the following different combinations of synchronization primitives: locks, semaphores, and locks with conditional variables.  
+> In addition to solving the producer-consumer problem, you will also implement one of the synchronization primitives inside the OS. In particular, for this lab, we will provide you with the implementation code for semaphores and locks in synch.c and synch.h, and you need to write the code to implement condition variables in synch.c and synch.h.  
 
-#### References
+
+### References
 1. DLX Instruction Set
 2. The DLX Architecture
 3. The DLX Operating System (DLXOS) Design
