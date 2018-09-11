@@ -1,0 +1,19 @@
+###############################################################################
+## FILENAME: 		"Prelab2.txt"
+## WRITTEN BY: 		Andrew St. Pierre & Eli Kern
+## LAST MODIFIED: 	Tuesday, September 11, 2018
+###############################################################################
+
+## Q1. How many semaphores and locks are available in DLXOS, respectively?
+
+## Q2. What are the system calls to create, acquire and release a lock?
+
+## Q3. How is a semaphore created in DLXOS?
+
+## Q4. Explain how lock_acquire, lock_release, sem_signal and sem_wait work.
+
+## Q5. What is a handle and how is it used to access semaphores in DLXOS?
+
+
+
+##### END "Prelab2.txt"
